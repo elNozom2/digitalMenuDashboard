@@ -1,0 +1,26 @@
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: var(--bg);
+}
+.loading .loader {
+  margin-bottom: 20px;
+}
+.loading .powerd {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.loading .powerd span {
+  margin: 10px;
+}
+.loading img {
+  width: 200px;
+}/*# sourceMappingURL=loading.css.map */

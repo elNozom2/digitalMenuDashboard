@@ -14,6 +14,11 @@
           type="article: heading, paragraph"
           v-if="loading"
         ></v-skeleton-loader>
+        <v-skeleton-loader
+          v-bind="attrs"
+          type="article: heading, paragraph"
+          v-if="loading"
+        ></v-skeleton-loader>
         <v-treeview v-else :search="search" :items="items">
           <template v-slot:label="{ item, open }">
             <div class="flex-space">
@@ -166,7 +171,7 @@ export default Vue.extend({
       disable: false,
       dialog: false,
       selectedCategory: "",
-      loading: false,
+      loading: true,
       categoryCode: "",
       snackbar: false,
       text: "Category added successfully",
@@ -325,9 +330,9 @@ export default Vue.extend({
     //   this.value = "Data not found";
     //   // console.log(err.message);
     // }
-    // setTimeout(() => {
-    //   this.loading = false;
-    // }, 5000);
+    setTimeout(() => {
+      this.loading = false;
+    }, 5000);
     this.generateCode(this.items.length + 1, 0);
   },
 });

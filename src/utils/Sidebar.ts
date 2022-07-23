@@ -15,7 +15,7 @@ export default [
       },
       {
         icon: "mdi-account-outline",
-        title: "create Items",
+        title: "add Item",
         to: `/createProducts`,
       },
     ],

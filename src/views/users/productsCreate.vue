@@ -2,7 +2,7 @@
   <v-container>
     <template>
       <v-card>
-        <v-tabs background-color="primary " dark fixed-tabs>
+        <v-tabs background-color="primary" fixed-tabs>
           <v-tab class="font-weight-bold"> <span>بيانات الصنف</span> </v-tab>
           <v-tab class="font-weight-bold"><span>الاسعار</span></v-tab>
           <v-tab-item>
@@ -238,7 +238,8 @@
                   <v-btn
                     depressed
                     width="100%"
-                    color="primary font-weight-bold"
+                    class="gredient-color"
+                    color="font-weight-bold primary"
                   >
                     حفظ
                   </v-btn>

@@ -10,12 +10,10 @@
           clearable
         ></v-text-field>
         <v-skeleton-loader
-          v-bind="attrs"
           type="article: heading, paragraph"
           v-if="loading"
         ></v-skeleton-loader>
         <v-skeleton-loader
-          v-bind="attrs"
           type="article: heading, paragraph"
           v-if="loading"
         ></v-skeleton-loader>
@@ -29,7 +27,7 @@
                 </v-icon>
                 <v-icon
                   @click="selectCategory(item)"
-                  v-if="item.children"
+                  v-if="item.children.length > 0"
                   class="mr-2"
                 >
                   {{ open ? "mdi-plus-circle" : "mdi-plus-circle" }}
@@ -156,6 +154,8 @@
 import Vue from "vue";
 import axios from "axios";
 import { generateColors, switchMode } from "@/utils/helpers";
+import groupsData from "../../utils/groups/groups.ts";
+const groups = new groupsData();
 export default Vue.extend({
   name: "HomeView",
   data() {
@@ -171,94 +171,16 @@ export default Vue.extend({
       disable: false,
       dialog: false,
       selectedCategory: "",
-      loading: true,
+      loading: false,
       categoryCode: "",
       snackbar: false,
       text: "Category added successfully",
       timeout: 2000,
       value: "add the category",
       inputRules: [(v) => !!v || "Item is required"],
-      comboItems: [
-        { id: "01", name: "Applications :", childrenLength: 3, level: 0 },
-        { id: "02", name: "Downloads :", childrenLength: 19, level: 0 },
-        { id: "0101", name: "Calendar : app", childrenLength: 0, level: 1 },
-        { id: "0102", name: "Chrome : app", childrenLength: 0, level: 1 },
-        { id: "0103", name: "Webstorm : app", childrenLength: 0, level: 1 },
-        { id: "0201", name: "November : pdf", childrenLength: 0, level: 1 },
-        { id: "0202", name: "October : pdf", childrenLength: 0, level: 1 },
-        { id: "0203", name: "Tutorial : html", childrenLength: 0, level: 1 },
-        { id: "03", name: "Documents :", childrenLength: 1, level: 0 },
-        { id: "0301", name: "vuetify :", childrenLength: 1, level: 1 },
-        { id: "0204", name: "November : pdf", childrenLength: 0, level: 1 },
-        { id: "0205", name: "October : pdf", childrenLength: 0, level: 1 },
-        { id: "0206", name: "Tutorial : html", childrenLength: 0, level: 1 },
-        { id: "0207", name: "November : pdf", childrenLength: 0, level: 1 },
-        { id: "0208", name: "October : pdf", childrenLength: 0, level: 1 },
-        { id: "0209", name: "Tutorial : html", childrenLength: 0, level: 1 },
-        { id: "0210", name: "November : pdf", childrenLength: 0, level: 1 },
-        { id: "0211", name: "October : pdf", childrenLength: 0, level: 1 },
-        { id: "0212", name: "Tutorial : html", childrenLength: 0, level: 1 },
-        { id: "0213", name: "November : pdf", childrenLength: 0, level: 1 },
-        { id: "0214", name: "October : pdf", childrenLength: 0, level: 1 },
-        { id: "0215", name: "Tutorial : html", childrenLength: 0, level: 1 },
-        { id: "0216", name: "November : pdf", childrenLength: 0, level: 1 },
-        { id: "0217", name: "October : pdf", childrenLength: 0, level: 1 },
-        { id: "0218", name: "Tutorial : html", childrenLength: 0, level: 1 },
-        { id: "0219", name: "November : pdf", childrenLength: 0, level: 1 },
-      ],
+      comboItems: groups.comboItem,
       staticData: ["خامات", "منتج نهائي"],
-      items: [
-        {
-          id: "01",
-          name: "Applications :",
-          children: [
-            { id: "0101", name: "Calendar : app", children: [] },
-            { id: "0102", name: "Chrome : app", children: [] },
-            { id: "0103", name: "Webstorm : app", children: [] },
-          ],
-        },
-        {
-          id: "02",
-          name: "Downloads :",
-          children: [
-            { id: "0201", name: "November : pdf", children: [] },
-            { id: "0202", name: "October : pdf", children: [] },
-            { id: "0203", name: "Tutorial : html", children: [] },
-            { id: "0204", name: "November : pdf", children: [] },
-            { id: "0205", name: "October : pdf", children: [] },
-            { id: "0206", name: "Tutorial : html", children: [] },
-            { id: "0207", name: "November : pdf", children: [] },
-            { id: "0208", name: "October : pdf", children: [] },
-            { id: "0209", name: "Tutorial : html", children: [] },
-            { id: "0210", name: "November : pdf", children: [] },
-            { id: "0211", name: "October : pdf", children: [] },
-            { id: "0212", name: "Tutorial : html", children: [] },
-            { id: "0213", name: "November : pdf", children: [] },
-            { id: "0214", name: "October : pdf", children: [] },
-            { id: "0215", name: "Tutorial : html", children: [] },
-            { id: "0216", name: "November : pdf", children: [] },
-            { id: "0217", name: "October : pdf", children: [] },
-            { id: "0218", name: "Tutorial : html", children: [] },
-            { id: "0219", name: "November : pdf", children: [] },
-          ],
-        },
-        {
-          id: "03",
-          name: "Documents :",
-          children: [
-            {
-              id: "0301",
-              name: "vuetify :",
-              children: [
-                {
-                  id: "030101",
-                  name: "src :",
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      items: groups.items,
     };
   },
   methods: {
@@ -330,9 +252,9 @@ export default Vue.extend({
     //   this.value = "Data not found";
     //   // console.log(err.message);
     // }
-    setTimeout(() => {
-      this.loading = false;
-    }, 5000);
+    // setTimeout(() => {
+    //   this.loading = false;
+    // }, 5000);
     this.generateCode(this.items.length + 1, 0);
   },
 });

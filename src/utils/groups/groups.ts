@@ -1,3 +1,4 @@
+import { group } from "./classesLevels/levels";
 import { comboType } from "./comboInterface";
 import { itemType } from "./comboInterface";
 export default class groups {
@@ -5,32 +6,87 @@ export default class groups {
   items: itemType[] = [
     {
       id: "01",
+      parentCode: "",
       name: "Applications :",
+      level: 0,
+      groupLevel: new group(),
       children: [
-        { id: "0101", name: "Calendar : app", children: [] },
-        { id: "0102", name: "Chrome : app", children: [] },
-        { id: "0103", name: "Webstorm : app", children: [] },
+        {
+          id: "0101",
+          parentCode: "01",
+          name: "Calendar : app",
+          level: 1,
+          groupLevel: new group(),
+          children: [],
+        },
+        {
+          id: "0102",
+          parentCode: "01",
+          name: "Chrome : app",
+          level: 1,
+          groupLevel: new group(),
+
+          children: [],
+        },
+        {
+          id: "0103",
+          parentCode: "01",
+          name: "Webstorm : app",
+          level: 1,
+          groupLevel: new group(),
+
+          children: [],
+        },
       ],
     },
     {
       id: "02",
+      parentCode: "",
       name: "Downloads :",
+      level: 0,
+      groupLevel: new group(),
       children: [
-        { id: "0201", name: "November : pdf", children: [] },
-        { id: "0202", name: "October : pdf", children: [] },
+        {
+          id: "0201",
+          parentCode: "02",
+          name: "November : pdf",
+          level: 1,
+          groupLevel: new group(),
+
+          children: [],
+        },
+        {
+          id: "0202",
+          parentCode: "02",
+          name: "October : pdf",
+          level: 1,
+          groupLevel: new group(),
+          children: [],
+        },
       ],
     },
     {
       id: "03",
+      parentCode: "",
       name: "Documents :",
+      groupLevel: new group(),
+
+      level: 0,
       children: [
         {
           id: "0301",
           name: "vuetify :",
+          parentCode: "03",
+          level: 1,
+          groupLevel: new group(),
+
           children: [
             {
               id: "030101",
+              parentCode: "0301",
+              groupLevel: new group(),
               name: "src :",
+              level: 2,
               children: [],
             },
           ],
@@ -41,22 +97,32 @@ export default class groups {
   constructor() {
     this.insertComboData();
   }
-  generateComboItem = (item: itemType, level: number): comboType => {
+  generateComboItem = (
+    item: itemType,
+    location: [number, number]
+  ): comboType => {
     const comboItem: comboType = {
       id: item.id,
       name: item.name,
       childrenLength: item.children.length,
-      level,
+      level: item.level,
+      location,
     };
     return comboItem;
   };
   insertComboData = () => {
-    for (const item of this.items) {
-      this.comboItem.push(this.generateComboItem(item, 0));
-      for (const childItem of item.children) {
-        this.comboItem.push(this.generateComboItem(childItem, 1));
+    for (let i = 0; i < this.items.length; i++) {
+      const item = this.items[i];
+      this.comboItem.push(this.generateComboItem(item, [i, -1]));
+      for (let j = 0; j < item.children.length; j++) {
+        this.comboItem.push(this.generateComboItem(item.children[j], [i, j]));
       }
     }
+    // for (const item of this.items) {
+    //   for (const childItem of item.children) {
+    //     this.comboItem.push(this.generateComboItem(childItem, 1));
+    //   }
+    // }
   };
 }
 

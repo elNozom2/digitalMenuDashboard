@@ -27,7 +27,7 @@
                 </v-icon>
                 <v-icon
                   @click="selectCategory(item)"
-                  v-if="item.children.length > 0"
+                  v-if="item.level < 2"
                   class="mr-2"
                 >
                   {{ open ? "mdi-plus-circle" : "mdi-plus-circle" }}
@@ -70,7 +70,7 @@
                 <v-text-field
                   outlined
                   label="code"
-                  disabled
+                  readonly
                   v-model="categoryCode"
                 ></v-text-field>
               </template>
@@ -154,8 +154,10 @@
 import Vue from "vue";
 import axios from "axios";
 import { generateColors, switchMode } from "@/utils/helpers";
-import groupsData from "../../utils/groups/groups.ts";
+import groupsData from "../../utils/groups/groups";
+import { comboType, itemType } from "@/utils/groups/comboInterface";
 const groups = new groupsData();
+
 export default Vue.extend({
   name: "HomeView",
   data() {
@@ -195,47 +197,31 @@ export default Vue.extend({
       }
     },
     comboChanged(item) {
-      console.log("combo changed", item);
-      if (item && typeof item.id != "undefined") {
-        this.form.parentCode = item.id;
-        console.log("combo change ", item.childrenLength + 1, item.level + 1);
-        this.generateCode(item.childrenLength + 1, item.level + 1);
+      if (item == null) {
         return;
       }
-      this.generateCode(this.items.length + 1, 0);
-      this.form.parentCode = 0;
+      console.log();
+      if (item.location[1] == -1) {
+        this.generateCode(this.items[item.location[0]]);
+      } else {
+        this.generateCode(
+          this.items[item.location[0]].children[item.location[1]]
+        );
+      }
     },
     selectCategory(item) {
+      console.log("selected");
       this.$refs.form.resetValidation();
       this.$refs.focus.focus();
       this.$refs.focus.reset();
-      this.selectedCategory = item;
-      let modifiedItem;
-      for (const ele of this.comboItems) {
-        if (ele.id === item.id) {
-          modifiedItem = ele;
-          break;
-        }
-      }
-      this.comboChanged(modifiedItem);
+      this.generateCode(item);
     },
-
     deleteCategory(item) {
-      console.log("deleted", item);
       this.dialog = !this.dialog;
     },
-    generateCode(currentItem, level) {
-      console.log("generate code", currentItem, level);
-      if (currentItem <= 9) {
-        currentItem = `0${currentItem}`;
-      }
-      if (level == 0) {
-        this.categoryCode = `${currentItem}`;
-      } else if (level == 1) {
-        this.categoryCode = `${this.form.parentCode}${currentItem}`; //4
-      } else {
-        this.categoryCode = `${this.form.parentCode}${currentItem}`; //6
-      }
+    generateCode(item) {
+      console.log(item);
+      this.categoryCode = item.groupLevel.generateGroupCode(item);
     },
   },
   async mounted() {
@@ -255,7 +241,7 @@ export default Vue.extend({
     // setTimeout(() => {
     //   this.loading = false;
     // }, 5000);
-    this.generateCode(this.items.length + 1, 0);
+    // this.generateCode(this.items.length + 1, 0);
   },
 });
 </script>

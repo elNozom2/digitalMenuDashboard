@@ -45,4 +45,18 @@
 .flex-space {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+}
+
+.control-text {
+  white-space: nowrap;
+  width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }/*# sourceMappingURL=utilities.css.map */

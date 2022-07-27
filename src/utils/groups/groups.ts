@@ -3,100 +3,96 @@ import { comboType } from "./comboInterface";
 import { itemType } from "./comboInterface";
 export default class groups {
   comboItem: comboType[] = [];
-  items: itemType[] = [
-    {
-      id: "01",
-      parentCode: "",
-      name: "Applications :",
-      level: 0,
-      groupLevel: new group(),
-      children: [
-        {
-          id: "0101",
-          parentCode: "01",
-          name: "Calendar : app",
-          level: 1,
-          groupLevel: new group(),
-          children: [],
-        },
-        {
-          id: "0102",
-          parentCode: "01",
-          name: "Chrome : app",
-          level: 1,
-          groupLevel: new group(),
+  // items: itemType[] = [
+  //   {
+  //     id: "01",
+  //     parentCode: "",
+  //     name: "Applications :",
+  //     level: 0,
+  //     groupLevel: new group(),
+  //     children: [
+  //       {
+  //         id: "0101",
+  //         parentCode: "01",
+  //         name: "Calendar : app",
+  //         level: 1,
+  //         groupLevel: new group(),
+  //         children: [],
+  //       },
+  //       {
+  //         id: "0102",
+  //         parentCode: "01",
+  //         name: "Chrome : app",
+  //         level: 1,
+  //         groupLevel: new group(),
+  //         children: [],
+  //       },
+  //       {
+  //         id: "0103",
+  //         parentCode: "01",
+  //         name: "Webstorm : app",
+  //         level: 1,
+  //         groupLevel: new group(),
 
-          children: [],
-        },
-        {
-          id: "0103",
-          parentCode: "01",
-          name: "Webstorm : app",
-          level: 1,
-          groupLevel: new group(),
+  //         children: [],
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: "02",
+  //     parentCode: "",
+  //     name: "Downloads :",
+  //     level: 0,
+  //     groupLevel: new group(),
+  //     children: [
+  //       {
+  //         id: "0201",
+  //         parentCode: "02",
+  //         name: "November : pdf",
+  //         level: 1,
+  //         groupLevel: new group(),
 
-          children: [],
-        },
-      ],
-    },
-    {
-      id: "02",
-      parentCode: "",
-      name: "Downloads :",
-      level: 0,
-      groupLevel: new group(),
-      children: [
-        {
-          id: "0201",
-          parentCode: "02",
-          name: "November : pdf",
-          level: 1,
-          groupLevel: new group(),
+  //         children: [],
+  //       },
+  //       {
+  //         id: "0202",
+  //         parentCode: "02",
+  //         name: "October : pdf",
+  //         level: 1,
+  //         groupLevel: new group(),
+  //         children: [],
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: "03",
+  //     parentCode: "",
+  //     name: "Documents :",
+  //     groupLevel: new group(),
+  //     level: 0,
+  //     children: [
+  //       {
+  //         id: "0301",
+  //         name: "vuetify :",
+  //         parentCode: "03",
+  //         level: 1,
+  //         groupLevel: new group(),
 
-          children: [],
-        },
-        {
-          id: "0202",
-          parentCode: "02",
-          name: "October : pdf",
-          level: 1,
-          groupLevel: new group(),
-          children: [],
-        },
-      ],
-    },
-    {
-      id: "03",
-      parentCode: "",
-      name: "Documents :",
-      groupLevel: new group(),
-
-      level: 0,
-      children: [
-        {
-          id: "0301",
-          name: "vuetify :",
-          parentCode: "03",
-          level: 1,
-          groupLevel: new group(),
-
-          children: [
-            {
-              id: "030101",
-              parentCode: "0301",
-              groupLevel: new group(),
-              name: "src :",
-              level: 2,
-              children: [],
-            },
-          ],
-        },
-      ],
-    },
-  ];
-  constructor() {
-    this.insertComboData();
-  }
+  //         children: [
+  //           {
+  //             id: "030101",
+  //             parentCode: "0301",
+  //             groupLevel: new group(),
+  //             name: "src :",
+  //             level: 2,
+  //             children: [],
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //   },
+  // ];
+  constructor() {}
   generateComboItem = (
     item: itemType,
     location: [number, number]
@@ -104,17 +100,18 @@ export default class groups {
     const comboItem: comboType = {
       id: item.id,
       name: item.name,
-      childrenLength: item.children.length,
+      childrenLength: item.childrenLength,
       level: item.level,
       location,
     };
     return comboItem;
   };
-  insertComboData = () => {
-    for (let i = 0; i < this.items.length; i++) {
-      const item = this.items[i];
+  insertComboData = (items: itemType[]) => {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
       this.comboItem.push(this.generateComboItem(item, [i, -1]));
-      for (let j = 0; j < item.children.length; j++) {
+
+      for (let j = 0; j < item.childrenLength; j++) {
         this.comboItem.push(this.generateComboItem(item.children[j], [i, j]));
       }
     }

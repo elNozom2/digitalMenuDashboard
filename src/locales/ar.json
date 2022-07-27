@@ -1,8 +1,24 @@
 {
   "hello": "مرحبا",
-  "powerd_by":"بواسطة",
-  "sidebar" : {
-    "products" : "منتجات",
-    "orders" : "الطلبات"
+  "code": "كود",
+  "powerd_by": "بواسطة",
+  "parentCode": "القسم الرئيسي",
+  "categoryType": "نوع القسم",
+  "name": "الاسم الانجليزي",
+  "arabicName": "الاسم بالعربي",
+  "image": "الصورة",
+  "search": "البحث",
+  "submit": "اضافة",
+  "Warning": "تحذير",
+  "warningMsg": "هل تريد ازالة هذا القسم",
+  "close": "غلق",
+  "agree": "موافق",
+  "addMsg": "تم اضافة القسم بنجاح",
+  "dashboard": "لوحة رئيسية",
+  "sidebar": {
+    "products": "منتجات",
+    "orders": "الطلبات",
+    "users": "المستخدمون",
+    "groups": "المجموعات"
   }
 }

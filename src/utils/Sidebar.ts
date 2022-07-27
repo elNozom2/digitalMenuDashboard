@@ -10,7 +10,7 @@ export default [
       // },
       {
         icon: "mdi-account-outline",
-        title: "Groups",
+        title: "sidebar.groups",
         to: `/groups`,
       },
       {

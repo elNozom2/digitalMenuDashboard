@@ -5,11 +5,12 @@
         <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
-          label="Search"
+          :label="$t('search')"
           outlined
           clearable
         ></v-text-field>
         <v-skeleton-loader
+          class="mb-5"
           type="article: heading, paragraph"
           v-if="loading"
         ></v-skeleton-loader>
@@ -20,19 +21,19 @@
         <v-treeview v-else :search="search" :items="items">
           <template v-slot:label="{ item, open }">
             <div class="flex-space">
-              <span>{{ item.name }} {{ item.id }} </span>
-              <span>
-                <v-icon @click="deleteCategory(item)" class="mr-4">
-                  {{ open ? "mdi-delete" : "mdi-delete" }}
-                </v-icon>
+              <div class="control-text">{{ item.name }} {{ item.id }}</div>
+              <div>
                 <v-icon
                   @click="selectCategory(item)"
                   v-if="item.level < 2"
-                  class="mr-2"
+                  class="ma-2"
                 >
                   {{ open ? "mdi-plus-circle" : "mdi-plus-circle" }}
                 </v-icon>
-              </span>
+                <v-icon @click="deleteCategory(item)">
+                  {{ open ? "mdi-delete" : "mdi-delete" }}
+                </v-icon>
+              </div>
             </div>
           </template>
         </v-treeview>
@@ -45,7 +46,7 @@
                 <v-text-field
                   ref="focus"
                   outlined
-                  label="Name"
+                  :label="$t('name')"
                   v-model="form.name"
                   required
                   clearable
@@ -57,7 +58,7 @@
               <template>
                 <v-text-field
                   outlined
-                  label="الاسم"
+                  :label="$t('arabicName')"
                   v-model="form.arabicName"
                   required
                   clearable
@@ -69,25 +70,31 @@
               <template>
                 <v-text-field
                   outlined
-                  label="code"
+                  :label="$t('code')"
                   readonly
                   v-model="categoryCode"
                 ></v-text-field>
               </template>
             </v-col>
             <v-col cols="12">
-              <template>
-                <v-combobox
-                  outlined
-                  clearable
-                  v-model="selectedCategory"
-                  :disabled="disable"
-                  :items="comboItems"
-                  item-text="name"
-                  @change="comboChanged"
-                  :label="value"
-                ></v-combobox>
-              </template>
+              <v-combobox
+                v-if="disable"
+                outlined
+                :disabled="disable"
+                clearable
+                label="data Not found"
+              ></v-combobox>
+              <v-combobox
+                v-else
+                outlined
+                clearable
+                v-model="selectedCategory"
+                :disabled="disable"
+                :items="comboItems"
+                item-text="name"
+                @change="comboChanged"
+                :label="$t('parentCode')"
+              ></v-combobox>
             </v-col>
             <v-col cols="12">
               <template>
@@ -96,7 +103,7 @@
                   :items="staticData"
                   v-model="form.type"
                   :rules="inputRules"
-                  label="Standard"
+                  :label="$t('categoryType')"
                   dense
                   clearable
                 ></v-select>
@@ -107,18 +114,18 @@
                 outlined
                 accept="image/*"
                 v-model="form.image"
-                label="File input"
+                :label="$t('image')"
               ></v-file-input>
             </v-col>
             <v-col cols="12">
               <v-btn depressed width="100%" color="primary" @click="submitData">
-                Submit
+                {{ $t("submit") }}
               </v-btn>
             </v-col>
             <v-row>
               <template>
                 <div class="text-center">
-                  <v-snackbar v-model="snackbar" :timeout="timeout">
+                  <v-snackbar dark v-model="snackbar" :timeout="timeout">
                     {{ text }}
                   </v-snackbar>
                 </div>
@@ -131,15 +138,15 @@
         <v-row justify="center">
           <v-dialog v-model="dialog" persistent max-width="290">
             <v-card>
-              <v-card-title class="text-h3"> Warning </v-card-title>
-              <v-card-text>Do you want to delete item</v-card-text>
+              <v-card-title class="text-h4"> {{ $t("Warning") }} </v-card-title>
+              <v-card-text>{{ $t("warningMsg") }}</v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="green darken-1" text @click="dialog = false">
-                  Close
+                  {{ $t("close") }}
                 </v-btn>
                 <v-btn color="green darken-1" text @click="dialog = false">
-                  Agree
+                  {{ $t("agree") }}
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -161,6 +168,7 @@ const groups = new groupsData();
 export default Vue.extend({
   name: "HomeView",
   data() {
+    let text = this.$t("addMsg");
     return {
       form: {
         name: "",
@@ -170,19 +178,19 @@ export default Vue.extend({
         type: "",
       },
       search: "",
-      disable: false,
+      disable: true,
       dialog: false,
       selectedCategory: "",
-      loading: false,
-      categoryCode: "",
       snackbar: false,
-      text: "Category added successfully",
+      loading: true,
+      categoryCode: "",
+      text,
       timeout: 2000,
       value: "add the category",
       inputRules: [(v) => !!v || "Item is required"],
       comboItems: groups.comboItem,
       staticData: ["خامات", "منتج نهائي"],
-      items: groups.items,
+      items: [],
     };
   },
   methods: {
@@ -196,11 +204,28 @@ export default Vue.extend({
         }, 10000);
       }
     },
+    convertCurrentItemToStr(item) {
+      let strItem = item.toString();
+      if (item <= 9) {
+        strItem = `0${item}`;
+      }
+      return strItem;
+    },
+    generateGroupCode(currentItem) {
+      return `${currentItem.id}${this.convertCurrentItemToStr(
+        currentItem.childrenLength + 1
+      )}`;
+    },
     comboChanged(item) {
-      if (item == null) {
+      if (item == null || typeof item != "object") {
+        this.categoryCode =
+          this.items.length + 1 > 9
+            ? `${this.items.length + 1}`
+            : `0${this.items.length + 1}`;
+        this.resetForm();
         return;
       }
-      console.log();
+      this.resetForm();
       if (item.location[1] == -1) {
         this.generateCode(this.items[item.location[0]]);
       } else {
@@ -209,39 +234,35 @@ export default Vue.extend({
         );
       }
     },
-    selectCategory(item) {
-      console.log("selected");
+    resetForm() {
       this.$refs.form.resetValidation();
       this.$refs.focus.focus();
       this.$refs.focus.reset();
+    },
+    selectCategory(item) {
+      this.resetForm();
+      this.selectedCategory = item.name;
       this.generateCode(item);
     },
     deleteCategory(item) {
       this.dialog = !this.dialog;
     },
     generateCode(item) {
-      console.log(item);
-      this.categoryCode = item.groupLevel.generateGroupCode(item);
+      this.categoryCode = this.generateGroupCode(item);
     },
   },
   async mounted() {
-    // try {
-    //   const data = await fetch("http://192.168.1.40:5001/api/groups/0");
-    //   console.log("saddsads");
-    //   if (!data.ok) {
-    //     throw new Error("data not found");
-    //   }
-    //   const res = await data.json();
-    //   this.comboItem = res;
-    // } catch (err) {
-    //   this.disable = true;
-    //   this.value = "Data not found";
-    //   // console.log(err.message);
-    // }
+    const req = await fetch("http://192.168.1.40:5000/api/group/hierarchy");
+    const data = await req.json();
+    // this.items = data;
     // setTimeout(() => {
     //   this.loading = false;
-    // }, 5000);
-    // this.generateCode(this.items.length + 1, 0);
+    // }, 1500);
+    this.items = data;
+    this.loading = !this.loading;
+    this.disable = !this.disable;
+    groups.insertComboData(this.items);
+    this.comboChanged(null);
   },
 });
 </script>

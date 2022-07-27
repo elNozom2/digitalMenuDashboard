@@ -1,15 +1,31 @@
 {
   "hello": "Hello",
-  "powerd_by":"powerd by",
-  "error_getting_data" : "some unknown error happened please refresh the page or call customer support",
-  "cashtray_desc":"This report enables you to view Shifts details of a specific year...",
-  "select_data" : "please provide required fields to view the report",
-  "not_defined" :"not defined",
-  "sidebar" : {
-    "users":"users"
+  "powerd_by": "powerd by",
+  "error_getting_data": "some unknown error happened please refresh the page or call customer support",
+  "cashtray_desc": "This report enables you to view Shifts details of a specific year...",
+  "select_data": "please provide required fields to view the report",
+  "not_defined": "not defined",
+  "code": "Code",
+  "parentCode": "Parent category",
+  "categoryType": "Category type",
+  "name": "English name",
+  "arabicName": "Arabic name",
+  "image": "Image",
+  "search": "search",
+  "submit": "Submit",
+  "Warning": "Warning",
+  "warningMsg": "Do you want to delete this item",
+  "close": "Close",
+  "agree": "agree",
+  "addMsg": "category added successfully",
+  "required": "item is required",
+  "dashboard": "Dashboard",
+  "sidebar": {
+    "users": "users",
+    "groups": "Groups"
   },
-  "table" : {
-    "edit" : "edit",
-    "view" : "view"
+  "table": {
+    "edit": "edit",
+    "view": "view"
   }
 }

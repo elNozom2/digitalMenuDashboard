@@ -98,10 +98,11 @@ export default class groups {
     location: [number, number]
   ): comboType => {
     const comboItem: comboType = {
-      id: item.id,
-      name: item.name,
+      code: item.code,
+      name: item.groupNameEn,
       childrenLength: item.childrenLength,
       level: item.level,
+      parent: item.parentCode,
       location,
     };
     return comboItem;
@@ -110,7 +111,6 @@ export default class groups {
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       this.comboItem.push(this.generateComboItem(item, [i, -1]));
-
       for (let j = 0; j < item.childrenLength; j++) {
         this.comboItem.push(this.generateComboItem(item.children[j], [i, j]));
       }

@@ -1,7 +1,8 @@
 import { groupInterface } from "./groupInterface";
 
 export type comboType = {
-  id: string;
+  code: string;
+  parent: string;
   name: string;
   childrenLength: number;
   location: [number, number]; //tuple to determine the index of the comboItem in the items array
@@ -9,13 +10,12 @@ export type comboType = {
 };
 
 export type itemType = {
-  id: string;
-  name: string;
+  code: string;
+  groupName: string;
   level: number;
-  nameEn: string;
-  parent: string;
+  groupNameEn: string;
+  parentCode: string;
   children: itemType[];
   childrenLength: number;
-  groupLevel: groupInterface;
 };
 // { id: "01", name: "Applications :", childrenLength: 3, level: 0 }

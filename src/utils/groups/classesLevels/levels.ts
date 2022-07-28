@@ -9,7 +9,7 @@ const convertCurrentItemToStr = (item: number): string => {
 };
 export class group implements groupInterface {
   generateGroupCode(currentItem: itemType): string {
-    return `${currentItem.id}${convertCurrentItemToStr(
+    return `${currentItem.code}${convertCurrentItemToStr(
       currentItem.children.length + 1
     )}`;
   }

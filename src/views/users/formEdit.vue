@@ -21,8 +21,15 @@
         <v-treeview v-else :search="search" :items="items">
           <template v-slot:label="{ item, open }">
             <div class="flex-space">
-              <div class="control-text">{{ item.name }} {{ item.id }}</div>
+              <div class="control-text">
+                {{ item.groupNameEn }} {{ item.code }}
+              </div>
               <div>
+                <v-icon @click="updateCategory(item)">
+                  {{
+                    open ? "mdi-folder-edit-outline" : "mdi-folder-edit-outline"
+                  }}
+                </v-icon>
                 <v-icon
                   @click="selectCategory(item)"
                   v-if="item.level < 2"
@@ -47,7 +54,7 @@
                   ref="focus"
                   outlined
                   :label="$t('name')"
-                  v-model="form.name"
+                  v-model="form.groupNameEn"
                   required
                   clearable
                   :rules="inputRules"
@@ -59,7 +66,7 @@
                 <v-text-field
                   outlined
                   :label="$t('arabicName')"
-                  v-model="form.arabicName"
+                  v-model="form.groupName"
                   required
                   clearable
                   :rules="inputRules"
@@ -72,7 +79,7 @@
                   outlined
                   :label="$t('code')"
                   readonly
-                  v-model="categoryCode"
+                  v-model="form.code"
                 ></v-text-field>
               </template>
             </v-col>
@@ -102,7 +109,6 @@
                   outlined
                   :items="staticData"
                   v-model="form.type"
-                  :rules="inputRules"
                   :label="$t('categoryType')"
                   dense
                   clearable
@@ -125,8 +131,16 @@
             <v-row>
               <template>
                 <div class="text-center">
-                  <v-snackbar dark v-model="snackbar" :timeout="timeout">
+                  <v-snackbar
+                    v-if="postRequestSuccess"
+                    dark
+                    v-model="snackbar"
+                    :timeout="timeout"
+                  >
                     {{ text }}
+                  </v-snackbar>
+                  <v-snackbar v-else dark v-model="snackbar" :timeout="timeout">
+                    {{ failedPost }}
                   </v-snackbar>
                 </div>
               </template>
@@ -171,19 +185,22 @@ export default Vue.extend({
     let text = this.$t("addMsg");
     return {
       form: {
-        name: "",
-        arabicName: "",
-        image: null,
+        groupNameEn: "",
+        groupName: "",
+        // image: null,
         parentCode: 0,
-        type: "",
+        code: "",
+        // type: "",
       },
       search: "",
       disable: true,
+      postRequestSuccess: true,
       dialog: false,
       selectedCategory: "",
       snackbar: false,
+      updateGroupCode: 0,
       loading: true,
-      categoryCode: "",
+      failedPost: "",
       text,
       timeout: 2000,
       value: "add the category",
@@ -194,10 +211,46 @@ export default Vue.extend({
     };
   },
   methods: {
+    updateCategory(item) {
+      this.resetForm();
+      this.updateGroupCode = item.groupCode;
+      this.form.groupName = item.groupName;
+      this.form.groupNameEn = item.groupNameEn;
+      this.form.code = item.code;
+      this.form.parentCode = item.parentCode;
+      console.log(item.parentCode);
+      const category = this.comboItems.filter((comboitem) => {
+        return comboitem.code == item.parentCode;
+      });
+      this.selectedCategory = category.length > 0 ? category[0].name : "";
+    },
+    // updateRequest(groupCode) {
+    //   axios
+    //     .put(`http://192.168.1.40:5000/api/group/${groupCode}`, this.form)
+    //     .then((res) => {
+    //       console.log(res);
+    //     });
+    // },
+    Request() {
+      const url =
+        this.updateGroupCode == 0
+          ? `http://192.168.1.40:5000/api/group`
+          : `http://192.168.1.40:5000/api/group/${this.updateGroupCode}`;
+      const method = this.updateGroupCode == 0 ? "post" : "put";
+      axios[method](url, this.form)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          this.postRequestSuccess = false;
+          this.failedPost = err.message;
+          console.log(err.message);
+        });
+      this.snackbar = !this.snackbar;
+    },
     submitData() {
       if (this.$refs.form.validate()) {
-        console.log(this.form);
-        this.snackbar = !this.snackbar;
+        this.Request();
       } else {
         setTimeout(() => {
           this.$refs.form.resetValidation();
@@ -212,16 +265,18 @@ export default Vue.extend({
       return strItem;
     },
     generateGroupCode(currentItem) {
-      return `${currentItem.id}${this.convertCurrentItemToStr(
+      return `${currentItem.code}${this.convertCurrentItemToStr(
         currentItem.childrenLength + 1
       )}`;
     },
     comboChanged(item) {
+      this.updateGroupCode = 0;
       if (item == null || typeof item != "object") {
-        this.categoryCode =
+        this.form.code =
           this.items.length + 1 > 9
             ? `${this.items.length + 1}`
             : `0${this.items.length + 1}`;
+        this.form.parentCode = "";
         this.resetForm();
         return;
       }
@@ -240,27 +295,31 @@ export default Vue.extend({
       this.$refs.focus.reset();
     },
     selectCategory(item) {
+      this.updateGroupCode = 0;
       this.resetForm();
-      this.selectedCategory = item.name;
+      this.selectedCategory = item.groupNameEn;
       this.generateCode(item);
     },
     deleteCategory(item) {
       this.dialog = !this.dialog;
     },
     generateCode(item) {
-      this.categoryCode = this.generateGroupCode(item);
+      this.form.code = this.generateGroupCode(item);
+      console.log(item.code);
+      this.form.parentCode = item.code;
     },
   },
   async mounted() {
-    const req = await fetch("http://192.168.1.40:5000/api/group/hierarchy");
-    const data = await req.json();
-    // this.items = data;
-    // setTimeout(() => {
-    //   this.loading = false;
-    // }, 1500);
-    this.items = data;
+    const req = await axios.get("http://192.168.1.40:5000/api/group/hierarchy");
+    console.log(req);
+    if (req.data == null) {
+      this.items = [];
+    } else {
+      this.items = req.data;
+    }
     this.loading = !this.loading;
     this.disable = !this.disable;
+    console.log(this.items);
     groups.insertComboData(this.items);
     this.comboChanged(null);
   },
